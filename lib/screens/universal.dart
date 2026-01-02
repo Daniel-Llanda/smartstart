@@ -1,13 +1,14 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-// Import the category pages with aliases
-import 'alphabets_page.dart';
-import 'animals_page.dart';
-import 'shapes_page.dart' as shape_page;
-import 'colors_page.dart' as color_page;
-import 'numbers_page.dart';
-import 'bodyparts_page.dart';
+// Import category pages
+// import 'alphabets_page.dart';
+// import 'animals_page.dart';
+// import 'shapes_page.dart' as shape_page;
+// import 'colors_page.dart' as color_page;
+// import 'numbers_page.dart';
+// import 'bodyparts_page.dart';
 
 /// 🟦 Age 2 Completion Flags
 bool colorGameAgeTwoCompleted = false;
@@ -50,8 +51,10 @@ class UniversalAgeScreen extends StatefulWidget {
 class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  /// ⭐ Count completed categories
   int getCompletedStars() {
     int count = 0;
+
     switch (widget.ageValue) {
       case 2:
         if (colorGameAgeTwoCompleted) count++;
@@ -61,6 +64,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
         if (animalGameAgeTwoCompleted) count++;
         if (alphabetGameAgeTwoCompleted) count++;
         break;
+
       case 3:
         if (colorGameAgeThreeCompleted) count++;
         if (shapeGameAgeThreeCompleted) count++;
@@ -69,6 +73,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
         if (animalGameAgeThreeCompleted) count++;
         if (alphabetGameAgeThreeCompleted) count++;
         break;
+
       case 4:
         if (colorGameAgeFourCompleted) count++;
         if (shapeGameAgeFourCompleted) count++;
@@ -78,6 +83,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
         if (alphabetGameAgeFourCompleted) count++;
         break;
     }
+
     return count;
   }
 
@@ -87,13 +93,27 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
         : 'Your age is ${widget.ageValue}';
   }
 
+  String getBackgroundImage() {
+    switch (widget.ageValue) {
+      case 2:
+        return 'assets/images/two.png';
+      case 3:
+        return 'assets/images/three.png';
+      case 4:
+        return 'assets/images/four.png';
+      default:
+        return 'assets/images/one.png';
+    }
+  }
+
+  /// 🔊 Play category audio
   Future<void> playSound(String category) async {
     try {
-      String langFolder = widget.selectedLanguage == 'Tagalog'
+      final langFolder = widget.selectedLanguage == 'Tagalog'
           ? 'assets/sounds/category/l_tag/'
           : 'assets/sounds/category/l_eng/';
 
-      final Map<String, String> tagalogFiles = {
+      final tagalogFiles = {
         'color': 'kulay.m4a',
         'shapes': 'hugis.m4a',
         'alphabets': 'letra.m4a',
@@ -102,7 +122,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
         'bodyparts': 'parte_ng_katawan.m4a',
       };
 
-      final Map<String, String> englishFiles = {
+      final englishFiles = {
         'color': 'colors.m4a',
         'shapes': 'shapes.m4a',
         'alphabets': 'letters.m4a',
@@ -122,8 +142,56 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
         AssetSource('${langFolder.replaceFirst('assets/', '')}$fileName'),
       );
     } catch (e) {
-      debugPrint('Error playing sound: $e');
+      debugPrint('Audio error: $e');
     }
+  }
+
+  /// 🔗 Open category page
+  void openCategory(String category) {
+    Widget page;
+
+    // switch (category) {
+    //   case 'alphabets':
+    //     page = AlphabetsPage(
+    //       ageValue: widget.ageValue,
+    //       selectedLanguage: widget.selectedLanguage,
+    //     );
+    //     break;
+    //   case 'animals':
+    //     page = AnimalsPage(
+    //       ageValue: widget.ageValue,
+    //       selectedLanguage: widget.selectedLanguage,
+    //     );
+    //     break;
+    //   case 'shapes':
+    //     page = shape_page.ShapesPage(
+    //       ageValue: widget.ageValue,
+    //       selectedLanguage: widget.selectedLanguage,
+    //     );
+    //     break;
+    //   case 'color':
+    //     page = color_page.ColorsPage(
+    //       ageValue: widget.ageValue,
+    //       selectedLanguage: widget.selectedLanguage,
+    //     );
+    //     break;
+    //   case 'numbers':
+    //     page = NumbersPage(
+    //       ageValue: widget.ageValue,
+    //       selectedLanguage: widget.selectedLanguage,
+    //     );
+    //     break;
+    //   case 'bodyparts':
+    //     page = BodyPartsPage(
+    //       ageValue: widget.ageValue,
+    //       selectedLanguage: widget.selectedLanguage,
+    //     );
+    //     break;
+    //   default:
+    //     return;
+    // }
+
+    // Navigator.push(context, MaterialPageRoute(builder: (_) => page));
   }
 
   @override
@@ -132,95 +200,60 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
     super.dispose();
   }
 
-  void openCategory(String category) {
-    Widget page;
-    switch (category) {
-      case 'alphabets':
-        page = AlphabetsPage(
-          ageValue: widget.ageValue,
-          selectedLanguage: widget.selectedLanguage,
-        );
-        break;
-      case 'animals':
-        page = AnimalsPage(
-          ageValue: widget.ageValue,
-          selectedLanguage: widget.selectedLanguage,
-        );
-        break;
-      case 'shapes':
-        page = shape_page.ShapesPage(
-          ageValue: widget.ageValue,
-          selectedLanguage: widget.selectedLanguage,
-        );
-        break;
-      case 'color':
-        page = color_page.ColorsPage(
-          ageValue: widget.ageValue,
-          selectedLanguage: widget.selectedLanguage,
-        );
-        break;
-      case 'numbers':
-        page = NumbersPage(
-          ageValue: widget.ageValue,
-          selectedLanguage: widget.selectedLanguage,
-        );
-        break;
-      case 'bodyparts':
-        page = BodyPartsPage(
-          ageValue: widget.ageValue,
-          selectedLanguage: widget.selectedLanguage,
-        );
-        break;
-      default:
-        return;
-    }
-    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
-  }
-
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> items = [
+    final items = [
       {
+        'image': 'assets/images/colors.png',
         'labelEng': 'Colors',
         'labelTag': 'Kulay',
         'name': 'color',
-        'color': Colors.orangeAccent.shade100,
       },
       {
+        'image': 'assets/images/shapes.png',
         'labelEng': 'Shapes',
         'labelTag': 'Mga Hugis',
         'name': 'shapes',
-        'color': Colors.purpleAccent.shade100,
       },
       {
+        'image': 'assets/images/alphabets.png',
         'labelEng': 'Alphabets',
         'labelTag': 'Alpabeto',
         'name': 'alphabets',
-        'color': Colors.yellow.shade200,
       },
       {
+        'image': 'assets/images/animals.png',
         'labelEng': 'Animals',
         'labelTag': 'Hayop',
         'name': 'animals',
-        'color': Colors.lightBlueAccent.shade100,
       },
       {
+        'image': 'assets/images/numbers.png',
         'labelEng': 'Numbers',
         'labelTag': 'Numero',
         'name': 'numbers',
-        'color': Colors.greenAccent.shade100,
       },
       {
+        'image': 'assets/images/bodyparts.png',
         'labelEng': 'Body Parts',
         'labelTag': 'Parte ng Katawan',
         'name': 'bodyparts',
-        'color': Colors.pinkAccent.shade100,
       },
+    ];
+
+    final colors = [
+      Colors.orangeAccent,
+      Colors.lightBlueAccent,
+      Colors.pinkAccent,
+      Colors.tealAccent,
+      Colors.purpleAccent,
+      Colors.blueAccent,
     ];
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
+        centerTitle: true,
         title: Text(
           getDisplayText(),
           style: const TextStyle(
@@ -228,111 +261,104 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                final label = widget.selectedLanguage == 'Tagalog'
-                    ? item['labelTag']
-                    : item['labelEng'];
-
-                bool isCompleted = false;
-                switch (widget.ageValue) {
-                  case 2:
-                    if (item['name'] == 'color') isCompleted = colorGameAgeTwoCompleted;
-                    if (item['name'] == 'shapes') isCompleted = shapeGameAgeTwoCompleted;
-                    if (item['name'] == 'numbers') isCompleted = numberGameAgeTwoCompleted;
-                    if (item['name'] == 'bodyparts') isCompleted = bodypartGameAgeTwoCompleted;
-                    if (item['name'] == 'animals') isCompleted = animalGameAgeTwoCompleted;
-                    if (item['name'] == 'alphabets') isCompleted = alphabetGameAgeTwoCompleted;
-                    break;
-                  case 3:
-                    if (item['name'] == 'color') isCompleted = colorGameAgeThreeCompleted;
-                    if (item['name'] == 'shapes') isCompleted = shapeGameAgeThreeCompleted;
-                    if (item['name'] == 'numbers') isCompleted = numberGameAgeThreeCompleted;
-                    if (item['name'] == 'bodyparts') isCompleted = bodypartGameAgeThreeCompleted;
-                    if (item['name'] == 'animals') isCompleted = animalGameAgeThreeCompleted;
-                    if (item['name'] == 'alphabets') isCompleted = alphabetGameAgeThreeCompleted;
-                    break;
-                  case 4:
-                    if (item['name'] == 'color') isCompleted = colorGameAgeFourCompleted;
-                    if (item['name'] == 'shapes') isCompleted = shapeGameAgeFourCompleted;
-                    if (item['name'] == 'numbers') isCompleted = numberGameAgeFourCompleted;
-                    if (item['name'] == 'bodyparts') isCompleted = bodypartGameAgeFourCompleted;
-                    if (item['name'] == 'animals') isCompleted = animalGameAgeFourCompleted;
-                    if (item['name'] == 'alphabets') isCompleted = alphabetGameAgeFourCompleted;
-                    break;
-                }
-
-                return GestureDetector(
-                  onTap: () => openCategory(item['name']),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: item['color'], width: 3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            label,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        if (isCompleted)
-                          const Icon(Icons.check, size: 28, color: Colors.black),
-                        const SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: () => playSound(item['name']),
-                          child: const Icon(
-                            Icons.volume_up,
-                            size: 28,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    getBackgroundImage(),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned.fill(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      color: Colors.white.withOpacity(0.2),
                     ),
                   ),
-                );
-              },
+                ),
+                ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    final label = widget.selectedLanguage == 'Tagalog'
+                        ? item['labelTag']
+                        : item['labelEng'];
+
+                    return GestureDetector(
+                      onTap: () => openCategory(item['name']),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: colors[index % colors.length],
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colors[index % colors.length]
+                                  .withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(4, 6),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              item['image'],
+                              height: 45,
+                              width: 45,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                label!,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.volume_up,
+                                color: Colors.white,
+                              ),
+                              onPressed: () => playSound(item['name']),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: Colors.grey.shade200,
+            padding: const EdgeInsets.all(12),
+            color: Colors.white.withOpacity(0.7),
             child: Column(
               children: [
                 LinearProgressIndicator(
                   value: getCompletedStars() / 6,
                   minHeight: 12,
-                  backgroundColor: Colors.grey.shade400,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                  borderRadius: BorderRadius.circular(8),
+                  backgroundColor: Colors.deepPurple.shade100,
+                  valueColor: const AlwaysStoppedAnimation(Colors.deepPurple),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  "Stars collected: ${getCompletedStars()}/6",
-                  style: TextStyle(
-                    fontSize: 16,
+                  'Stars collected: ${getCompletedStars()}/6',
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple.shade700,
+                    color: Colors.deepPurple,
                   ),
                 ),
               ],
