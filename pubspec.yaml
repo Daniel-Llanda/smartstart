@@ -44,6 +44,10 @@ flutter:
     - assets/images/
     - assets/images/animals/
     - assets/images/body_parts/
+    - assets/images/alphabets/
+    - assets/images/numbers/
+    - assets/sounds/landing/l_eng
+    - assets/sounds/landing/l_tag
 
   # To add custom fonts to your application, uncomment and update this section:
   # fonts:

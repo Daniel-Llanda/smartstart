@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 // Import category pages
-// import 'alphabets_page.dart';
-// import 'animals_page.dart';
-// import 'shapes_page.dart' as shape_page;
-// import 'colors_page.dart' as color_page;
-// import 'numbers_page.dart';
-// import 'bodyparts_page.dart';
+import 'alphabets_page.dart';
+import 'animals_page.dart';
+import 'shapes_page.dart';
+import 'colors_page.dart';
+import 'numbers_page.dart';
+import 'bodyparts_page.dart';
 
 /// 🟦 Age 2 Completion Flags
 bool colorGameAgeTwoCompleted = false;
@@ -150,48 +150,48 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
   void openCategory(String category) {
     Widget page;
 
-    // switch (category) {
-    //   case 'alphabets':
-    //     page = AlphabetsPage(
-    //       ageValue: widget.ageValue,
-    //       selectedLanguage: widget.selectedLanguage,
-    //     );
-    //     break;
-    //   case 'animals':
-    //     page = AnimalsPage(
-    //       ageValue: widget.ageValue,
-    //       selectedLanguage: widget.selectedLanguage,
-    //     );
-    //     break;
-    //   case 'shapes':
-    //     page = shape_page.ShapesPage(
-    //       ageValue: widget.ageValue,
-    //       selectedLanguage: widget.selectedLanguage,
-    //     );
-    //     break;
-    //   case 'color':
-    //     page = color_page.ColorsPage(
-    //       ageValue: widget.ageValue,
-    //       selectedLanguage: widget.selectedLanguage,
-    //     );
-    //     break;
-    //   case 'numbers':
-    //     page = NumbersPage(
-    //       ageValue: widget.ageValue,
-    //       selectedLanguage: widget.selectedLanguage,
-    //     );
-    //     break;
-    //   case 'bodyparts':
-    //     page = BodyPartsPage(
-    //       ageValue: widget.ageValue,
-    //       selectedLanguage: widget.selectedLanguage,
-    //     );
-    //     break;
-    //   default:
-    //     return;
-    // }
+    switch (category) {
+      case 'alphabets':
+        page = AlphabetsPage(
+          ageValue: widget.ageValue,
+          selectedLanguage: widget.selectedLanguage,
+        );
+        break;
+      case 'animals':
+        page = AnimalsPage(
+          ageValue: widget.ageValue,
+          selectedLanguage: widget.selectedLanguage,
+        );
+        break;
+      case 'shapes':
+        page = ShapesPage(
+          ageValue: widget.ageValue,
+          selectedLanguage: widget.selectedLanguage,
+        );
+        break;
+      case 'color':
+        page = ColorsPage(
+          ageValue: widget.ageValue,
+          selectedLanguage: widget.selectedLanguage,
+        );
+        break;
+      case 'numbers':
+        page = NumbersPage(
+          ageValue: widget.ageValue,
+          selectedLanguage: widget.selectedLanguage,
+        );
+        break;
+      case 'bodyparts':
+        page = BodyPartsPage(
+          ageValue: widget.ageValue,
+          selectedLanguage: widget.selectedLanguage,
+        );
+        break;
+      default:
+        return;
+    }
 
-    // Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
   }
 
   @override
@@ -245,7 +245,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
       Colors.orangeAccent,
       Colors.lightBlueAccent,
       Colors.pinkAccent,
-      Colors.tealAccent,
+      Colors.tealAccent.shade700,
       Colors.purpleAccent,
       Colors.blueAccent,
     ];
@@ -254,6 +254,9 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.white, // ← back button color
+        ),
         title: Text(
           getDisplayText(),
           style: const TextStyle(
@@ -262,6 +265,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
           ),
         ),
       ),
+
       body: Column(
         children: [
           Expanded(
@@ -291,7 +295,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
                         : item['labelEng'];
 
                     return GestureDetector(
-                      onTap: () => openCategory(item['name']),
+                      onTap: () => openCategory(item['name'] as String),
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         padding: const EdgeInsets.all(16),
@@ -300,8 +304,7 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
                           borderRadius: BorderRadius.circular(25),
                           boxShadow: [
                             BoxShadow(
-                              color: colors[index % colors.length]
-                                  .withOpacity(0.4),
+                              color: colors[index % colors.length].withOpacity(0.4),
                               blurRadius: 12,
                               offset: const Offset(4, 6),
                             ),
@@ -310,14 +313,14 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
                         child: Row(
                           children: [
                             Image.asset(
-                              item['image'],
+                              item['image'] as String,
                               height: 45,
                               width: 45,
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Text(
-                                label!,
+                                label as String,
                                 style: const TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -326,16 +329,14 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
-                                Icons.volume_up,
-                                color: Colors.white,
-                              ),
-                              onPressed: () => playSound(item['name']),
+                              icon: const Icon(Icons.volume_up, color: Colors.white),
+                              onPressed: () => playSound(item['name'] as String),
                             ),
                           ],
                         ),
                       ),
                     );
+
                   },
                 ),
               ],

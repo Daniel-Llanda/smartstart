@@ -154,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       _buildAgeButton(
                         context,
                         age: 4,
-                        color: Colors.greenAccent,
+                        color: Colors.greenAccent.shade400,
                         labelEng: 'Four',
                         labelTag: 'Apat',
                       ),
@@ -264,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: playLabelSound,
               child: const CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Icon(Icons.volume_up, color: Colors.deepPurple),
+                child: Icon(Icons.volume_up, color: Colors.black),
               ),
             ),
           ),
