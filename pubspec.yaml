@@ -45,9 +45,29 @@ flutter:
     - assets/images/animals/
     - assets/images/body_parts/
     - assets/images/alphabets/
+    - assets/images/shapes/
     - assets/images/numbers/
-    - assets/sounds/landing/l_eng
-    - assets/sounds/landing/l_tag
+    - assets/sounds/landing/l_eng/
+    - assets/sounds/landing/l_tag/
+    - assets/sounds/categories/
+
+    - assets/sounds/numbers/eng/
+    - assets/sounds/numbers/tag/
+
+    - assets/sounds/animals/eng/
+    - assets/sounds/animals/tag/
+
+    - assets/images/alphabets/
+    - assets/sounds/alphabets/
+
+    - assets/sounds/colors/eng/
+    - assets/sounds/colors/tag/
+
+    - assets/sounds/bodyparts/eng/
+    - assets/sounds/bodyparts/tag/
+
+    - assets/sounds/shapes/eng/
+    - assets/sounds/shapes/tag/
 
   # To add custom fonts to your application, uncomment and update this section:
   # fonts:

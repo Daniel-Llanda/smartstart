@@ -107,13 +107,21 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
   }
 
   /// 🔊 Play category audio
+  /// 🔊 Play category audio based on language
   Future<void> playSound(String category) async {
     try {
-      final langFolder = widget.selectedLanguage == 'Tagalog'
-          ? 'assets/sounds/category/l_tag/'
-          : 'assets/sounds/category/l_eng/';
+      const basePath = 'sounds/categories/';
 
-      final tagalogFiles = {
+      final Map<String, String> englishAudio = {
+        'color': 'colors.m4a',
+        'shapes': 'shapes.m4a',
+        'alphabets': 'alphabets.m4a',
+        'animals': 'animals.m4a',
+        'numbers': 'numbers.m4a',
+        'bodyparts': 'bodyparts.m4a',
+      };
+
+      final Map<String, String> tagalogAudio = {
         'color': 'kulay.m4a',
         'shapes': 'hugis.m4a',
         'alphabets': 'letra.m4a',
@@ -122,29 +130,21 @@ class _UniversalAgeScreenState extends State<UniversalAgeScreen> {
         'bodyparts': 'parte_ng_katawan.m4a',
       };
 
-      final englishFiles = {
-        'color': 'colors.m4a',
-        'shapes': 'shapes.m4a',
-        'alphabets': 'letters.m4a',
-        'animals': 'animals.m4a',
-        'numbers': 'numbers.m4a',
-        'bodyparts': 'bodyparts.m4a',
-      };
-
       final fileName = widget.selectedLanguage == 'Tagalog'
-          ? tagalogFiles[category]
-          : englishFiles[category];
+          ? tagalogAudio[category]
+          : englishAudio[category];
 
       if (fileName == null) return;
 
       await _audioPlayer.stop();
       await _audioPlayer.play(
-        AssetSource('${langFolder.replaceFirst('assets/', '')}$fileName'),
+        AssetSource('$basePath$fileName'),
       );
     } catch (e) {
       debugPrint('Audio error: $e');
     }
   }
+
 
   /// 🔗 Open category page
   void openCategory(String category) {

@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-class ColorsPage extends StatelessWidget {
+class ColorsPage extends StatefulWidget {
   final int ageValue;
   final String selectedLanguage;
 
@@ -11,78 +12,68 @@ class ColorsPage extends StatelessWidget {
     required this.selectedLanguage,
   });
 
+  @override
+  State<ColorsPage> createState() => _ColorsPageState();
+}
+
+class _ColorsPageState extends State<ColorsPage> {
+  final AudioPlayer _player = AudioPlayer();
+
+  /// 🎨 Normalize label → filename
+  String _normalize(String text) {
+    return text.toLowerCase().replaceAll(' ', '-');
+  }
+
+  /// 🔊 Play color audio
+  Future<void> _playColorAudio(String eng, String tag) async {
+    try {
+      final folder = widget.selectedLanguage == 'Tagalog'
+          ? 'sounds/colors/tag/'
+          : 'sounds/colors/eng/';
+
+      final fileName = widget.selectedLanguage == 'Tagalog'
+          ? '${_normalize(tag)}.m4a'
+          : '${_normalize(eng)}.m4a';
+
+      await _player.stop();
+      await _player.play(
+        AssetSource('$folder$fileName'),
+      );
+    } catch (e) {
+      debugPrint('Color audio error: $e');
+    }
+  }
+
   /// 🎨 Color data per age
   List<Map<String, dynamic>> getColorsByAge() {
     final allColors = [
-      {
-        'color': Colors.red,
-        'eng': 'Red',
-        'tag': 'Pula',
-      },
-      {
-        'color': Colors.green,
-        'eng': 'Green',
-        'tag': 'Berde',
-      },
-      {
-        'color': Colors.blue,
-        'eng': 'Blue',
-        'tag': 'Asul',
-      },
-      {
-        'color': Colors.yellow,
-        'eng': 'Yellow',
-        'tag': 'Dilaw',
-      },
-      {
-        'color': Colors.orange,
-        'eng': 'Orange',
-        'tag': 'Kahel',
-      },
-      {
-        'color': Colors.black,
-        'eng': 'Black',
-        'tag': 'Itim',
-      },
-      {
-        'color': Colors.purple,
-        'eng': 'Purple',
-        'tag': 'Lila',
-      },
-      {
-        'color': Colors.pink,
-        'eng': 'Pink',
-        'tag': 'Rosas',
-      },
-      {
-        'color': Colors.brown,
-        'eng': 'Brown',
-        'tag': 'Kayumanggi',
-      },
-      {
-        'color': Colors.white,
-        'eng': 'White',
-        'tag': 'Puti',
-      },
-      {
-        'color': Colors.grey,
-        'eng': 'Grey',
-        'tag': 'Abo',
-      },
-      {
-        'color': const Color(0xFFFFD700),
-        'eng': 'Gold',
-        'tag': 'Ginto',
-      },
+      {'color': Colors.red, 'eng': 'Red', 'tag': 'Pula'},
+      {'color': Colors.green, 'eng': 'Green', 'tag': 'Berde'},
+      {'color': Colors.blue, 'eng': 'Blue', 'tag': 'Asul'},
+      {'color': Colors.yellow, 'eng': 'Yellow', 'tag': 'Dilaw'},
+      {'color': Colors.orange, 'eng': 'Orange', 'tag': 'Kahel'},
+      {'color': Colors.black, 'eng': 'Black', 'tag': 'Itim'},
+      {'color': Colors.purple, 'eng': 'Purple', 'tag': 'Lila'},
+      {'color': Colors.pink, 'eng': 'Pink', 'tag': 'Rosas'},
+      {'color': Colors.brown, 'eng': 'Brown', 'tag': 'Kayumanggi'},
+      {'color': Colors.white, 'eng': 'White', 'tag': 'Puti'},
+      {'color': Colors.grey, 'eng': 'Grey', 'tag': 'Abo'},
+      {'color': const Color(0xFFFFD700), 'eng': 'Gold', 'tag': 'Ginto'},
     ];
 
-    if (ageValue == 2) {
+    if (widget.ageValue == 2) {
       return allColors.take(4).toList();
-    } else if (ageValue == 3) {
+    } else if (widget.ageValue == 3) {
       return allColors.take(8).toList();
     } else {
       return allColors.take(12).toList();
     }
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override
@@ -96,7 +87,7 @@ class ColorsPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
-          selectedLanguage == 'Tagalog' ? 'Kulay' : 'Colors',
+          widget.selectedLanguage == 'Tagalog' ? 'Kulay' : 'Colors',
           style: const TextStyle(color: Colors.white),
         ),
       ),
@@ -114,10 +105,8 @@ class ColorsPage extends StatelessWidget {
               child: Container(color: Colors.white.withOpacity(0.25)),
             ),
           ),
-
-          /// 🎨 Color Grid
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+            padding: const EdgeInsets.all(16),
             child: GridView.builder(
               itemCount: colors.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -127,31 +116,35 @@ class ColorsPage extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final item = colors[index];
-                final label = selectedLanguage == 'Tagalog'
-                    ? item['tag']
-                    : item['eng'];
+                final eng = item['eng'] as String;
+                final tag = item['tag'] as String;
+                final label = widget.selectedLanguage == 'Tagalog' ? tag : eng;
+                final bgColor = item['color'] as Color;
 
-                return Container(
-                  decoration: BoxDecoration(
-                    color: item['color'],
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(2, 4),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: item['color'] == Colors.white
-                            ? Colors.black
-                            : Colors.white,
+                return GestureDetector(
+                  onTap: () => _playColorAudio(eng, tag),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: bgColor == Colors.white
+                              ? Colors.black
+                              : Colors.white,
+                        ),
                       ),
                     ),
                   ),

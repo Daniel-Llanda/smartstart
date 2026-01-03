@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-class NumbersPage extends StatelessWidget {
+class NumbersPage extends StatefulWidget {
   final int ageValue;
   final String selectedLanguage;
 
@@ -11,7 +12,14 @@ class NumbersPage extends StatelessWidget {
     required this.selectedLanguage,
   });
 
-  /// 🔢 Number names in Tagalog
+  @override
+  State<NumbersPage> createState() => _NumbersPageState();
+}
+
+class _NumbersPageState extends State<NumbersPage> {
+  final AudioPlayer _player = AudioPlayer();
+
+  /// 🔢 Tagalog number names
   final Map<int, String> tagalogNumbers = const {
     1: 'Isa',
     2: 'Dalawa',
@@ -45,7 +53,7 @@ class NumbersPage extends StatelessWidget {
     30: 'Tatlongpung',
   };
 
-  /// 🔢 Number names in English
+  /// 🔢 English number names
   final Map<int, String> englishNumbers = const {
     1: 'One',
     2: 'Two',
@@ -79,27 +87,53 @@ class NumbersPage extends StatelessWidget {
     30: 'Thirty',
   };
 
-  /// 🔢 Generate numbers based on age
-  List<Map<String, dynamic>> getNumbersByAge() {
-    int max;
+  /// 🔊 Normalize label → filename
+  String _normalizeForAudio(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll('’', '')
+        .replaceAll(' ', '-');
+  }
 
-    if (ageValue == 2) {
-      max = 10;
-    } else if (ageValue == 3) {
-      max = 20;
-    } else {
-      max = 30;
+  /// 🔊 Play number audio
+  Future<void> _playNumberAudio(String label) async {
+    try {
+      final folder = widget.selectedLanguage == 'Tagalog'
+          ? 'sounds/numbers/tag/'
+          : 'sounds/numbers/eng/';
+
+      final fileName = '${_normalizeForAudio(label)}.mp3';
+
+      await _player.stop();
+      await _player.play(AssetSource('$folder$fileName'));
+    } catch (e) {
+      debugPrint('Audio error: $e');
     }
+  }
+
+  /// 🔢 Numbers based on age
+  List<Map<String, dynamic>> getNumbersByAge() {
+    int max = widget.ageValue == 2
+        ? 10
+        : widget.ageValue == 3
+            ? 20
+            : 30;
 
     return List.generate(max, (index) {
       final number = index + 1;
       return {
         'value': number,
-        'label': selectedLanguage == 'Tagalog'
+        'label': widget.selectedLanguage == 'Tagalog'
             ? tagalogNumbers[number]!
             : englishNumbers[number]!,
       };
     });
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override
@@ -113,29 +147,24 @@ class NumbersPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
-          selectedLanguage == 'Tagalog' ? 'Numero' : 'Numbers',
+          widget.selectedLanguage == 'Tagalog' ? 'Numero' : 'Numbers',
           style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Stack(
         children: [
-          /// Background
           Positioned.fill(
             child: Image.asset(
               'assets/images/one.png',
               fit: BoxFit.cover,
             ),
           ),
-
-          /// Glass effect
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(color: Colors.white.withOpacity(0.25)),
             ),
           ),
-
-          /// 🔢 Numbers Grid with Images
           Padding(
             padding: const EdgeInsets.all(16),
             child: GridView.builder(
@@ -150,44 +179,44 @@ class NumbersPage extends StatelessWidget {
                 final number = item['value'] as int;
                 final label = item['label'] as String;
 
-                final imagePath = 'assets/images/numbers/$number.png';
-
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(2, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.asset(
-                            imagePath,
-                            fit: BoxFit.contain,
+                return GestureDetector(
+                  onTap: () => _playNumberAudio(label),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Image.asset(
+                              'assets/images/numbers/$number.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        label,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                        const SizedBox(height: 8),
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                    ],
+                        const SizedBox(height: 8),
+                      ],
+                    ),
                   ),
                 );
               },

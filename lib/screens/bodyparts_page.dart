@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-class BodyPartsPage extends StatelessWidget {
+class BodyPartsPage extends StatefulWidget {
   final int ageValue;
   final String selectedLanguage;
 
@@ -11,7 +12,39 @@ class BodyPartsPage extends StatelessWidget {
     required this.selectedLanguage,
   });
 
-  /// 🧍 Body parts data based on age
+  @override
+  State<BodyPartsPage> createState() => _BodyPartsPageState();
+}
+
+class _BodyPartsPageState extends State<BodyPartsPage> {
+  final AudioPlayer _player = AudioPlayer();
+
+  /// Normalize text → filename
+  String _normalize(String text) {
+    return text.toLowerCase().replaceAll(' ', '-');
+  }
+
+  /// 🔊 Play body part audio
+  Future<void> _playAudio(String eng, String tag) async {
+    try {
+      final folder = widget.selectedLanguage == 'Tagalog'
+          ? 'sounds/bodyparts/tag/'
+          : 'sounds/bodyparts/eng/';
+
+      final fileName = widget.selectedLanguage == 'Tagalog'
+          ? '${_normalize(tag)}.m4a'
+          : '${_normalize(eng)}.m4a';
+
+      await _player.stop();
+      await _player.play(
+        AssetSource('$folder$fileName'),
+      );
+    } catch (e) {
+      debugPrint('Body part audio error: $e');
+    }
+  }
+
+  /// 🧍 Body parts by age
   List<Map<String, String>> getBodyPartsByAge() {
     final allParts = [
       {'eng': 'Eyes', 'tag': 'Mata'},
@@ -31,13 +64,19 @@ class BodyPartsPage extends StatelessWidget {
       {'eng': 'Shoulders', 'tag': 'Balikat'},
     ];
 
-    if (ageValue == 2) {
+    if (widget.ageValue == 2) {
       return allParts.take(5).toList();
-    } else if (ageValue == 3) {
+    } else if (widget.ageValue == 3) {
       return allParts.take(10).toList();
     } else {
       return allParts.take(15).toList();
     }
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,7 +90,7 @@ class BodyPartsPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
-          selectedLanguage == 'Tagalog'
+          widget.selectedLanguage == 'Tagalog'
               ? 'Parte ng Katawan'
               : 'Body Parts',
           style: const TextStyle(color: Colors.white),
@@ -67,7 +106,7 @@ class BodyPartsPage extends StatelessWidget {
             ),
           ),
 
-          /// Glass effect
+          /// Glass blur
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -75,7 +114,7 @@ class BodyPartsPage extends StatelessWidget {
             ),
           ),
 
-          /// 🧍 Body Parts Grid with Images
+          /// 🧍 Body parts grid
           Padding(
             padding: const EdgeInsets.all(16),
             child: GridView.builder(
@@ -87,48 +126,50 @@ class BodyPartsPage extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final part = bodyParts[index];
-                final label = selectedLanguage == 'Tagalog'
-                    ? part['tag']
-                    : part['eng'];
+                final eng = part['eng']!;
+                final tag = part['tag']!;
+                final label =
+                    widget.selectedLanguage == 'Tagalog' ? tag : eng;
 
-                // Use lowercase English name for image filename
                 final imagePath =
-                    'assets/images/body_parts/${part['eng']!.toLowerCase()}.png';
+                    'assets/images/body_parts/${_normalize(eng)}.png';
 
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(2, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 100, // fixed image height
-                        child: Image.asset(
-                          imagePath,
-                          fit: BoxFit.contain,
+                return GestureDetector(
+                  onTap: () => _playAudio(eng, tag),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(2, 4),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        label!,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 100,
+                          child: Image.asset(
+                            imagePath,
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                    ],
+                        const SizedBox(height: 8),
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

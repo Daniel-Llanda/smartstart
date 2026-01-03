@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-class AnimalsPage extends StatelessWidget {
+class AnimalsPage extends StatefulWidget {
   final int ageValue;
   final String selectedLanguage;
 
@@ -10,6 +11,13 @@ class AnimalsPage extends StatelessWidget {
     required this.ageValue,
     required this.selectedLanguage,
   });
+
+  @override
+  State<AnimalsPage> createState() => _AnimalsPageState();
+}
+
+class _AnimalsPageState extends State<AnimalsPage> {
+  final AudioPlayer _player = AudioPlayer();
 
   /// 🐾 Animal data: Tagalog -> English
   final Map<String, String> animalsMap = const {
@@ -30,24 +38,47 @@ class AnimalsPage extends StatelessWidget {
     'Baboy': 'Pig',
   };
 
+  /// 🧼 Normalize text → filename
+  String _normalize(String text) {
+    return text.toLowerCase().replaceAll(' ', '-');
+  }
+
+  /// 🔊 Play animal audio
+  Future<void> _playAnimalAudio(String tagalog, String english) async {
+    try {
+      final folder = widget.selectedLanguage == 'Tagalog'
+          ? 'sounds/animals/tag/'
+          : 'sounds/animals/eng/';
+
+      final fileName = widget.selectedLanguage == 'Tagalog'
+          ? '${_normalize(tagalog)}.m4a'
+          : '${_normalize(english)}.m4a';
+
+      await _player.stop();
+      await _player.play(AssetSource('$folder$fileName'));
+    } catch (e) {
+      debugPrint('Animal audio error: $e');
+    }
+  }
+
   /// 🐾 Get animals based on age
   List<Map<String, String>> getAnimals() {
-    int count;
-    if (ageValue == 2) {
-      count = 5;
-    } else if (ageValue == 3) {
-      count = 10;
-    } else {
-      count = 15;
-    }
+    int count = widget.ageValue == 2
+        ? 5
+        : widget.ageValue == 3
+            ? 10
+            : 15;
 
-    // Take the first `count` animals
-    final entries = animalsMap.entries.take(count);
-
-    // Convert to list of maps: { 'tagalog': ..., 'english': ... }
-    return entries
+    return animalsMap.entries
+        .take(count)
         .map((e) => {'tagalog': e.key, 'english': e.value})
         .toList();
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,29 +92,24 @@ class AnimalsPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
-          selectedLanguage == 'Tagalog' ? 'Mga Hayop' : 'Animals',
+          widget.selectedLanguage == 'Tagalog' ? 'Mga Hayop' : 'Animals',
           style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Stack(
         children: [
-          /// Background
           Positioned.fill(
             child: Image.asset(
               'assets/images/one.png',
               fit: BoxFit.cover,
             ),
           ),
-
-          /// Glass effect
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(color: Colors.white.withOpacity(0.25)),
             ),
           ),
-
-          /// 🐾 Animals Grid with Images
           Padding(
             padding: const EdgeInsets.all(16),
             child: GridView.builder(
@@ -95,48 +121,50 @@ class AnimalsPage extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final animal = animals[index];
-                final displayName = selectedLanguage == 'Tagalog'
-                    ? animal['tagalog']!
-                    : animal['english']!;
-                final imagePath =
-                    'assets/images/animals/${animal['english']!.toLowerCase()}.png';
+                final tagalog = animal['tagalog']!;
+                final english = animal['english']!;
+                final displayName = widget.selectedLanguage == 'Tagalog'
+                    ? tagalog
+                    : english;
 
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(2, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.asset(
-                            imagePath,
-                            fit: BoxFit.contain,
+                return GestureDetector(
+                  onTap: () => _playAnimalAudio(tagalog, english),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Image.asset(
+                              'assets/images/animals/${english.toLowerCase()}.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        displayName,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                        const SizedBox(height: 8),
+                        Text(
+                          displayName,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                    ],
+                        const SizedBox(height: 8),
+                      ],
+                    ),
                   ),
                 );
               },

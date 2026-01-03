@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-class ShapesPage extends StatelessWidget {
+class ShapesPage extends StatefulWidget {
   final int ageValue;
   final String selectedLanguage;
 
@@ -12,65 +13,173 @@ class ShapesPage extends StatelessWidget {
   });
 
   @override
+  State<ShapesPage> createState() => _ShapesPageState();
+}
+
+class _ShapesPageState extends State<ShapesPage> {
+  final AudioPlayer _player = AudioPlayer();
+
+  /// 🔤 Shapes in Tagalog
+  final Map<String, String> tagalogShapes = const {
+    'Circle': 'Bilog',
+    'Square': 'Parisukat',
+    'Triangle': 'Tatsulok',
+    'Rectangle': 'Parihaba',
+    'Oval': 'Oblong',
+    'Star': 'Bituin',
+    'Diamond': 'Diamante',
+    'Heart': 'Puso',
+    'Pentagon': 'Pentagon',
+    'Hexagon': 'Hexagon',
+    'Octagon': 'Octagon',
+    'Arrow': 'Palaso',
+  };
+
+  /// 🔤 Shapes in English
+  final Map<String, String> englishShapes = const {
+    'Circle': 'Circle',
+    'Square': 'Square',
+    'Triangle': 'Triangle',
+    'Rectangle': 'Rectangle',
+    'Oval': 'Oval',
+    'Star': 'Star',
+    'Diamond': 'Diamond',
+    'Heart': 'Heart',
+    'Pentagon': 'Pentagon',
+    'Hexagon': 'Hexagon',
+    'Octagon': 'Octagon',
+    'Arrow': 'Arrow',
+  };
+
+  /// 🔢 Shapes based on age
+  List<String> getShapesByAge() {
+    switch (widget.ageValue) {
+      case 2:
+        return ['Circle', 'Square', 'Triangle', 'Rectangle'];
+      case 3:
+        return ['Circle', 'Square', 'Triangle', 'Rectangle', 'Oval', 'Star', 'Diamond', 'Heart'];
+      case 4:
+        return [
+          'Circle', 'Square', 'Triangle', 'Rectangle', 'Oval', 'Star',
+          'Diamond', 'Heart', 'Pentagon', 'Hexagon', 'Octagon', 'Arrow'
+        ];
+      default:
+        return [];
+    }
+  }
+
+  /// 🔊 Normalize label → filename
+  String _normalizeForAudio(String text) {
+    return text.toLowerCase().replaceAll(' ', '-');
+  }
+
+  /// 🔊 Play shape audio
+  Future<void> _playShapeAudio(String shape) async {
+    try {
+      final folder = widget.selectedLanguage == 'Tagalog'
+          ? 'sounds/shapes/tag/'
+          : 'sounds/shapes/eng/';
+      final fileName = '${_normalizeForAudio(shape)}.m4a';
+
+      await _player.stop();
+      await _player.play(AssetSource('$folder$fileName'));
+    } catch (e) {
+      debugPrint('Audio error: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final shapes = getShapesByAge();
+    final isTagalog = widget.selectedLanguage == 'Tagalog';
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple.withOpacity(0.85),
-        title: Text(
-          selectedLanguage == 'Tagalog'
-              ? 'Shapes'
-              : 'Hugis',
-        ),
+        backgroundColor: Colors.deepPurple,
         centerTitle: true,
+        title: Text(
+          isTagalog ? 'Hugis' : 'Shapes',
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       body: Stack(
         children: [
-          // Background
           Positioned.fill(
             child: Image.asset(
               'assets/images/one.png',
               fit: BoxFit.cover,
             ),
           ),
-
-          // Glass effect
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-              child: Container(
-                color: Colors.white.withOpacity(0.25),
-              ),
+              child: Container(color: Colors.white.withOpacity(0.25)),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: GridView.builder(
+              itemCount: shapes.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+              ),
+              itemBuilder: (context, index) {
+                final shape = shapes[index];
+                final label = isTagalog
+                    ? tagalogShapes[shape]!
+                    : englishShapes[shape]!;
 
-          // Content
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  selectedLanguage == 'Tagalog'
-                      ? 'Edad: $ageValue'
-                      : 'Age: $ageValue',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                return GestureDetector(
+                  onTap: () => _playShapeAudio(shape),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Image.asset(
+                              'assets/images/shapes/${shape.toLowerCase()}.png',
+                              fit: BoxFit.contain,
+                            ),
+
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  selectedLanguage == 'Tagalog'
-                      ? 'Dito ilalagay ang alpabeto game'
-                      : 'Alphabet game goes here',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ],
