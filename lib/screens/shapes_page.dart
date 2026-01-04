@@ -102,8 +102,11 @@ class _ShapesPageState extends State<ShapesPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.lightBlueAccent,
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.white, // ← back button color
+        ),
         title: Text(
           isTagalog ? 'Hugis' : 'Shapes',
           style: const TextStyle(color: Colors.white),
@@ -142,7 +145,7 @@ class _ShapesPageState extends State<ShapesPage> {
                   onTap: () => _playShapeAudio(shape),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.lightBlueAccent,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -156,24 +159,30 @@ class _ShapesPageState extends State<ShapesPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Image.asset(
-                              'assets/images/shapes/${shape.toLowerCase()}.png',
-                              fit: BoxFit.contain,
+                          child: Center(
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset(
+                                'assets/images/shapes/${shape.toLowerCase()}.png',
+                                fit: BoxFit.contain,
+                                color: Colors.white,
+                                colorBlendMode: BlendMode.srcIn,
+                              ),
                             ),
-
                           ),
                         ),
-                        const SizedBox(height: 8),
+
                         Text(
                           label,
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),
+
                         const SizedBox(height: 8),
                       ],
                     ),

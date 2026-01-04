@@ -143,9 +143,10 @@ class _NumbersPageState extends State<NumbersPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.purpleAccent,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
+        
         title: Text(
           widget.selectedLanguage == 'Tagalog' ? 'Numero' : 'Numbers',
           style: const TextStyle(color: Colors.white),

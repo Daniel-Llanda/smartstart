@@ -264,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: playLabelSound,
               child: const CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Icon(Icons.volume_up, color: Colors.black),
+                child: Icon(Icons.volume_up, color: Colors.deepPurple),
               ),
             ),
           ),

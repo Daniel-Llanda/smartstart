@@ -62,7 +62,7 @@ class _AlphabetsPageState extends State<AlphabetsPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.pinkAccent,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(

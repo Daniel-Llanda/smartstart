@@ -86,7 +86,7 @@ class _BodyPartsPageState extends State<BodyPartsPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blueAccent,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
@@ -138,7 +138,7 @@ class _BodyPartsPageState extends State<BodyPartsPage> {
                   onTap: () => _playAudio(eng, tag),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.blueAccent,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -164,7 +164,7 @@ class _BodyPartsPageState extends State<BodyPartsPage> {
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),

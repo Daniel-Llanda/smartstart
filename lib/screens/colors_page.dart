@@ -83,7 +83,7 @@ class _ColorsPageState extends State<ColorsPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.orangeAccent,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
@@ -91,6 +91,36 @@ class _ColorsPageState extends State<ColorsPage> {
           style: const TextStyle(color: Colors.white),
         ),
       ),
+      // 🔽 ADD THIS
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.all(16),
+      //   child: SizedBox(
+      //     height: 55,
+      //     child: ElevatedButton(
+      //       onPressed: () {
+      //         // TODO: Navigate to mini game
+      //         debugPrint('Play Mini Game pressed');
+      //       },
+      //       style: ElevatedButton.styleFrom(
+      //         backgroundColor: Colors.orangeAccent,
+      //         shape: RoundedRectangleBorder(
+      //           borderRadius: BorderRadius.circular(16),
+      //         ),
+      //         elevation: 6,
+      //       ),
+      //       child: Text(
+      //         widget.selectedLanguage == 'Tagalog'
+      //             ? 'Maglaro ng Mini Game'
+      //             : 'Play Mini Game',
+      //         style: const TextStyle(
+      //           fontSize: 20,
+      //           fontWeight: FontWeight.bold,
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
       body: Stack(
         children: [
           Positioned.fill(

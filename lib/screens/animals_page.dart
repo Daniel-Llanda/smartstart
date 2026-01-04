@@ -88,7 +88,7 @@ class _AnimalsPageState extends State<AnimalsPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.tealAccent.shade700,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
@@ -131,7 +131,7 @@ class _AnimalsPageState extends State<AnimalsPage> {
                   onTap: () => _playAnimalAudio(tagalog, english),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.tealAccent.shade700,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -145,20 +145,25 @@ class _AnimalsPageState extends State<AnimalsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Image.asset(
-                              'assets/images/animals/${english.toLowerCase()}.png',
-                              fit: BoxFit.contain,
+                          child: Center(
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset(
+                                'assets/images/animals/${english.toLowerCase()}.png',
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 8),
                         Text(
                           displayName,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
                         ),
